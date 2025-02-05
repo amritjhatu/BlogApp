@@ -1,0 +1,34 @@
+﻿@model BlogWebApp.Models.Article
+
+<h2>Edit Article</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken() <!-- This is used for CSRF protection -->
+
+    <!-- Hidden input for ArticleId -->
+    <input type="hidden" name="ArticleId" value="@Model.ArticleId" />
+
+    <div class="form-group">
+        <label for="Title">Title</label>
+        <input type="text" class="form-control" id="Title" name="Title" value="@Model.Title" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Body">Body</label>
+        <!-- Regular textarea for HTML input -->
+        <textarea class="form-control" id="Body" name="Body" rows="10" required>@Model.Body</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="StartDate">Start Date</label>
+        <input type="date" class="form-control" id="StartDate" name="StartDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <div class="form-group">
+        <label for="EndDate">End Date</label>
+        <input type="date" class="form-control" id="EndDate" name="EndDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Cancel</a>
+</form>

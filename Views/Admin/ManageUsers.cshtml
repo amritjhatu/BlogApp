@@ -1,0 +1,87 @@
+﻿@model IEnumerable<BlogWebApp.Models.UserRoleViewModel>
+
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<h1>Manage Users</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Roles</th>
+            <th>Contributor Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userRole in Model)
+        {
+            <tr>
+                <td>@userRole.UserName</td>
+                <td>
+                    @if (userRole.Roles != null)
+                    {
+                        @foreach (var role in userRole.Roles)
+                        {
+                            <span>@role</span><br />
+                        }
+                    }
+                </td>
+                <td>
+                    <!-- Checkbox for Contributor role -->
+                    <input type="checkbox" id="isContributor_@userRole.UserName"
+                           @(userRole.Roles != null && userRole.Roles.Contains("Contributor") ? "checked" : "")
+                           onclick="updateRole('@userRole.UserName', this.checked)" />
+                </td>
+                <td>
+                    <button class="btn btn-danger" onclick="confirmBan('@userRole.UserName')">Ban</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function updateRole(userName, isContributor) {
+            $.ajax({
+                url: '/Admin/UpdateUserRoles',  // POST action in the controller
+                method: 'POST',
+                data: {
+                    userName: userName,
+                    isContributor: isContributor
+                },
+                success: function () {
+                    alert('Role updated successfully!');
+                },
+                error: function () {
+                    alert('An error occurred while updating the role.');
+                }
+            });
+        }
+
+        function confirmBan(userName) {
+            if (confirm('Are you sure you want to ban this user? This action cannot be undone.')) {
+                // Proceed with banning the user
+                banUser(userName);
+            }
+        }
+
+        function banUser(userName) {
+            $.ajax({
+                url: '/Admin/BanUser',  // POST action in the controller to ban the user
+                method: 'POST',
+                data: { userName: userName },
+                success: function () {
+                    alert('User banned successfully!');
+                    location.reload(); // Refresh the page to remove the banned user
+                },
+                error: function () {
+                    alert('An error occurred while banning the user.');
+                }
+            });
+        }
+    </script>
+}

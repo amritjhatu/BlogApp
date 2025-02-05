@@ -1,0 +1,22 @@
+﻿@model BlogWebApp.Models.Article
+
+<h2>@Model.Title</h2>
+<p>
+    <strong>
+        @if (Model.Contributor != null)
+        {
+            @($"{Model.Contributor.FirstName} {Model.Contributor.LastName}")
+        }
+        else
+        {
+            @Model.ContributorUsername  // Fallback in case Contributor is null
+        }
+    </strong>, @Model.CreateDate?.ToString("MMMM dd, yyyy")
+</p>
+
+<!-- Render sanitized Body as raw HTML -->
+<div>
+    @Html.Raw(Model.Body)
+</div>
+
+<a href="@Url.Action("Index", "Home")">Back to Articles</a>
