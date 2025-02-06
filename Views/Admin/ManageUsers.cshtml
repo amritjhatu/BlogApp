@@ -36,7 +36,11 @@
                            onclick="updateRole('@userRole.UserName', this.checked)" />
                 </td>
                 <td>
-                    <button class="btn btn-danger" onclick="confirmBan('@userRole.UserName')">Ban</button>
+                    <!-- Only show Ban button if the user is not an Admin -->
+                    @if (userRole.Roles != null && !userRole.Roles.Contains("Admin"))
+                    {
+                        <button class="btn btn-danger" onclick="confirmBan('@userRole.UserName')">Ban</button>
+                    }
                 </td>
             </tr>
         }
