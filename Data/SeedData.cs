@@ -1,3 +1,4 @@
+using System;
 using BlogWebApp.Data;
 using BlogWebApp.Models;
 using Microsoft.AspNetCore.Identity;
@@ -24,17 +25,24 @@ public static class SeedData
         }
 
         // Seed Admin user
-        var adminUser = await userManager.FindByEmailAsync("a@a.a");
+        var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL") 
+            ?? throw new InvalidOperationException("ADMIN_EMAIL environment variable is missing.");
+        var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD") 
+            ?? throw new InvalidOperationException("ADMIN_PASSWORD environment variable is missing.");
+        var adminFirstName = Environment.GetEnvironmentVariable("ADMIN_FIRSTNAME") ?? "Admin";
+        var adminLastName = Environment.GetEnvironmentVariable("ADMIN_LASTNAME") ?? "User";
+
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
         {
             adminUser = new User
             {
-                UserName = "a@a.a",
-                Email = "a@a.a",
-                FirstName = "Admin",
-                LastName = "User"
+                UserName = adminEmail,
+                Email = adminEmail,
+                FirstName = adminFirstName,
+                LastName = adminLastName
             };
-            var result = await userManager.CreateAsync(adminUser, "P@$$w0rd");
+            var result = await userManager.CreateAsync(adminUser, adminPassword);
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -42,17 +50,24 @@ public static class SeedData
         }
 
         // Seed Contributor user
-        var contributorUser = await userManager.FindByEmailAsync("c@c.c");
+        var contributorEmail = Environment.GetEnvironmentVariable("CONTRIBUTOR_EMAIL") 
+            ?? throw new InvalidOperationException("CONTRIBUTOR_EMAIL environment variable is missing.");
+        var contributorPassword = Environment.GetEnvironmentVariable("CONTRIBUTOR_PASSWORD") 
+            ?? throw new InvalidOperationException("CONTRIBUTOR_PASSWORD environment variable is missing.");
+        var contributorFirstName = Environment.GetEnvironmentVariable("CONTRIBUTOR_FIRSTNAME") ?? "Contributor";
+        var contributorLastName = Environment.GetEnvironmentVariable("CONTRIBUTOR_LASTNAME") ?? "User";
+
+        var contributorUser = await userManager.FindByEmailAsync(contributorEmail);
         if (contributorUser == null)
         {
             contributorUser = new User
             {
-                UserName = "c@c.c",
-                Email = "c@c.c",
-                FirstName = "Contributor",
-                LastName = "User"
+                UserName = contributorEmail,
+                Email = contributorEmail,
+                FirstName = contributorFirstName,
+                LastName = contributorLastName
             };
-            var result = await userManager.CreateAsync(contributorUser, "P@$$w0rd");
+            var result = await userManager.CreateAsync(contributorUser, contributorPassword);
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(contributorUser, "Contributor");
@@ -83,7 +98,7 @@ public static class SeedData
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(7), // End date is 7 days later
                 Contributor = contributorUser, // Set the navigation property directly
-                ContributorUsername = "c@c.c" // Set the foreign key directly
+                ContributorUsername = contributorEmail // Set the foreign key directly
             };
 
             await context.Articles.AddAsync(article);
