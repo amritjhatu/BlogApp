@@ -294,3 +294,4 @@
 /home/rhino/MSDev/Asst1/BlogWebApp/bin/Debug/net9.0/AngleSharp.Css.dll
 /home/rhino/MSDev/Asst1/BlogWebApp/bin/Debug/net9.0/HtmlSanitizer.dll
 /home/rhino/MSDev/Asst1/BlogWebApp/bin/Debug/net9.0/System.Collections.Immutable.dll
+/home/rhino/MSDev/Asst1/BlogWebApp/obj/Debug/net9.0/BlogWebApp.sourcelink.json
