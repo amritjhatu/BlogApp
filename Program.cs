@@ -28,26 +28,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
-// **Ensure migrations and seeding are completed before starting the app**
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        var userManager = services.GetRequiredService<UserManager<User>>();
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-        context.Database.Migrate();
-        SeedData.Initialize(context, userManager, roleManager).GetAwaiter().GetResult();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-    }
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -68,5 +48,25 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// **Ensure migrations and seeding are completed before starting the app**
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<UserManager<User>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+        context.Database.Migrate();
+        SeedData.Initialize(context, userManager, roleManager).GetAwaiter().GetResult();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+    }
+}
 
 app.Run();
