@@ -28,31 +28,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles(); // Serve static files (e.g., CSS, JavaScript, images)
-
-app.UseRouting();
-
-app.UseAuthentication(); // Add authentication middleware
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-// Migrate and seed the database
+// **Ensure migrations and seeding are completed before starting the app**
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -62,11 +38,8 @@ using (var scope = app.Services.CreateScope())
         var userManager = services.GetRequiredService<UserManager<User>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-        // Ensure the database is migrated
         context.Database.Migrate();
-
-        // Explicitly call the Seed() method
-        await SeedData.Initialize(context, userManager, roleManager);
+        SeedData.Initialize(context, userManager, roleManager).GetAwaiter().GetResult();
     }
     catch (Exception ex)
     {
@@ -74,5 +47,26 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while migrating or seeding the database.");
     }
 }
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

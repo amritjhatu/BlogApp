@@ -1,2 +1,9 @@
 appsettings.Development.json
 .env
+bin/
+obj/
+
+# Ignore SQLite database files
+*.db
+*.db-shm
+*.db-wal

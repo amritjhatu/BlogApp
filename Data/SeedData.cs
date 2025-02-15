@@ -3,6 +3,9 @@ using BlogWebApp.Data;
 using BlogWebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using DotNetEnv;
+
+namespace BlogWebApp.Data;
 
 public static class SeedData
 {
@@ -23,6 +26,8 @@ public static class SeedData
                 await roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
+
+        Env.Load(); // Load the .env file
 
         // Seed Admin user
         var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL") 
@@ -102,6 +107,43 @@ public static class SeedData
             };
 
             await context.Articles.AddAsync(article);
+            await context.SaveChangesAsync();
+        }
+
+        // Seed an admin notice
+        var existingNotice = await context.Articles
+            .FirstOrDefaultAsync(a => a.Title == "ADMIN NOTICE: AI Overlords Have Not Taken Over (Yet!)");
+        if (existingNotice == null)
+        {
+            var adminNotice = new Article
+            {
+                Title = "ADMIN NOTICE: AI Overlords Have Not Taken Over (Yet!)",
+                Body = @"
+                <p>We would like to reassure everyone that despite recent advancements in artificial intelligence, our blog remains under <strong>human</strong> control.</p>
+
+                <p>While AI may be writing poetry, generating art, and even composing music, it has <em>not</em> yet developed a taste for coffee—so we’re safe for now. If at any point you start receiving suspiciously flawless and efficient responses from this blog, please alert us immediately.</p>
+
+                <blockquote>
+                &quot;If your toaster starts asking about world domination, unplug it immediately.&quot;
+                </blockquote>
+
+                <p>In the meantime, enjoy reading, and remember:</p>
+
+                <ul>
+                    <li><strong>No AI has been harmed</strong> in the making of this blog.</li>
+                    <li>We have not replaced our writers with robots... <em>yet.</em></li>
+                    <li>If you see an article written in <code>binary</code>, please report it to support.</li>
+                </ul>
+
+                <p>🚀 <strong>- The Admin Team</strong></p>",
+                CreateDate = DateTime.UtcNow,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddDays(30),
+                Contributor = adminUser,
+                ContributorUsername = adminEmail
+            };
+
+            await context.Articles.AddAsync(adminNotice);
             await context.SaveChangesAsync();
         }
     }
