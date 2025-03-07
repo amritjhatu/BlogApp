@@ -12,7 +12,9 @@
             <th>User Name</th>
             <th>Roles</th>
             <th>Contributor Role</th>
+            <th></th>
             <th>Actions</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -34,6 +36,14 @@
                     <input type="checkbox" id="isContributor_@userRole.UserName"
                            @(userRole.Roles != null && userRole.Roles.Contains("Contributor") ? "checked" : "")
                            onclick="updateRole('@userRole.UserName', this.checked)" />
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-username="@userRole.UserName">Edit</a> 
+                </td>
+                <td>
+                    <form asp-action="Details" asp-route-username="@userRole.UserName">
+                        <button type="submit" class="btn btn-success">Details</button>
+                    </form>
                 </td>
                 <td>
                     <!-- Only show Ban button if the user is not an Admin -->
