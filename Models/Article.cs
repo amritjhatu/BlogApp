@@ -18,9 +18,11 @@ public class Article
     public DateTime? CreateDate { get; set; }
 
     [Required]
+    [Display(Name = "Start Date")]
     public DateTime? StartDate { get; set; }
 
     [Required]
+    [Display(Name = "End Date")]
     public DateTime? EndDate { get; set; }
 
     public User? Contributor { get; set; }  // Navigation property to User (Contributor)
