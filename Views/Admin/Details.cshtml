@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>of A User</h4>
+    <h4>of @Model.FirstName @Model.LastName </h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -110,8 +110,8 @@
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-username="@Model.UserName">Edit</a>          
-
+    <a asp-action="Edit" asp-route-username="@Model.UserName" class="btn btn-primary">Edit</a>
+    <br>          
     <form asp-action="ManageUsers">
         <button type="submit" class="btn btn-warning">Back to Manage Users</button>
     </form>

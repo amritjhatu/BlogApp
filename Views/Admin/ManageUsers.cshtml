@@ -38,7 +38,7 @@
                            onclick="updateRole('@userRole.UserName', this.checked)" />
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-username="@userRole.UserName">Edit</a> 
+                    <a asp-action="Edit" asp-route-username="@userRole.UserName" class="btn btn-primary">Edit</a>
                 </td>
                 <td>
                     <form asp-action="Details" asp-route-username="@userRole.UserName">
@@ -76,26 +76,33 @@
             });
         }
 
-        function confirmBan(userName) {
-            if (confirm('Are you sure you want to ban this user? This action cannot be undone.')) {
-                // Proceed with banning the user
-                banUser(userName);
-            }
-        }
+    function getAntiForgeryToken() {
+        return $('input[name="__RequestVerificationToken"]').val();
+    }
 
-        function banUser(userName) {
-            $.ajax({
-                url: '/Admin/BanUser',  // POST action in the controller to ban the user
-                method: 'POST',
-                data: { userName: userName },
-                success: function () {
-                    alert('User banned successfully!');
-                    location.reload(); // Refresh the page to remove the banned user
-                },
-                error: function () {
-                    alert('An error occurred while banning the user.');
-                }
-            });
+    function confirmBan(userName) {
+        if (confirm('Are you sure you want to ban this user? This action cannot be undone.')) {
+            // Proceed with banning the user
+            banUser(userName);
+        }
+    }
+
+    function banUser(userName) {
+        $.ajax({
+            url: '/Admin/BanUser',  // POST action in the controller to ban the user
+            method: 'POST',
+            data: {
+                userName: userName,
+                __RequestVerificationToken: getAntiForgeryToken()
+            },
+            success: function () {
+                alert('User banned successfully!');
+                location.reload(); // Refresh the page to remove the banned user
+            },
+            error: function () {
+                alert('An error occurred while banning the user.');
+            }
+        });
         }
     </script>
 }
